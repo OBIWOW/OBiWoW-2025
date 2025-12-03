@@ -42,7 +42,7 @@ PPTX file here
 5. Upload the file `two-column-table.txt` to Galaxy. This will be your first dataset in Galaxy-FOX. Let's do something with it -:)
 6. SINGLE JOBS - 1 
       - Select the tool group `Text Manipulation` and then the tool `Convert delimiters to TAB`
-      - Select the dataset `two-column-table.txt` from History and run the job.
+      - Select the dataset `two-column-table.txt` from History, select `Commas` from the `Convert all` parameter, and run the job.
       - Examine the result.
 7. SINGLE JOBS - 2
       - Select the tool group `Text Manipulation` and then the tool `Line/Word/Character count of a dataset`.
