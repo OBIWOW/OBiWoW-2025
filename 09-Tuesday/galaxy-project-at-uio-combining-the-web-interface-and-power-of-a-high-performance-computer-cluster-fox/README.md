@@ -77,4 +77,6 @@ PPTX file here
 
 ## Hands-on Session - real examples
 
+- Process sample dataset using tools available in Galaxy portal
+
 ## Software Requirements
