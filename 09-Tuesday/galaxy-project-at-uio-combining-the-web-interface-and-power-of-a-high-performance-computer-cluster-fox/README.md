@@ -62,7 +62,7 @@ Open the [Galaxy presentation](https://docs.google.com/presentation/d/1nmJh4OO_J
           - Select `Workflows` on the top menu, choose a workflow and export it by clicking on the blue arrow in the right upper corner of the workflow box
 9. WORKFLOW
       - Extract from steps 6 & 7
-      - Go to the three horisontal lines on the top of History
+      - Go to the three horisontal lines on the top of History and select `Extract workflow` in the dropdown
       - Check `two-column-table.txt` from History Items (green fields) section
       - Check `Include "Convert" in workflow` and `Include "Line/Word/Character count" in workflow` from Tools section
       - Click on `Create Workflow` button on top
