@@ -82,5 +82,8 @@ If you want to try it again using different examples, try this: [A short introdu
 
 - Process sample dataset using tools available in Galaxy portal
 - [Processing sequence dataset: Mapping reads from FASTQ files](https://docs.google.com/presentation/d/1ZEHU4fZV6lFPlUVN4fZrna648AKUy2AEpmUoDfHDmjs/edit?usp=sharing)
+  - Test datasets: Available at Galaxy - Data Libraries (detailed in the presentation)
 
 ## Software Requirements
+
+- Tools are available in the [Galaxy instance at Educloud](https://galaxy.educloud.no)
