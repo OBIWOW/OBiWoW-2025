@@ -24,6 +24,12 @@ For the full Health AI in R curriculum, visit [https://bnwolford.github.io/Healt
 All materials hosted here are subject to the licenses described in the LICENSE file.
 ## Instructors
 Brooke Wolford
+## Facilitators
+Vandana Vandana
+Andrew Morris
 ## Live Troubleshooting Session
 Wednesday, 10 Deember 14:00-15:00
 ## Software Requirements
+R 3.6.0+
+RStudio 2025.09
+Packages: dplyr, tidyr, readr, ggplot2, knitr, rmarkdown
