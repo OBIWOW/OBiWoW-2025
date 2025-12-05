@@ -78,8 +78,9 @@ Open the [Galaxy presentation](https://docs.google.com/presentation/d/1nmJh4OO_J
    
 If you want to try it again using different examples, try this: [A short introduction to Galaxy](https://training.galaxyproject.org/training-material/topics/introduction/tutorials/galaxy-intro-short/tutorial.html)
 
-## Hands-on Session - real examples
+## Hands-on Session
 
 - Process sample dataset using tools available in Galaxy portal
+- [Processing sequence dataset: Mapping reads from FASTQ files](https://docs.google.com/presentation/d/1ZEHU4fZV6lFPlUVN4fZrna648AKUy2AEpmUoDfHDmjs/edit?usp=sharing)
 
 ## Software Requirements
