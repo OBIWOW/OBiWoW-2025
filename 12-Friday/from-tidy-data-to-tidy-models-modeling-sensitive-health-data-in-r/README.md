@@ -28,7 +28,7 @@ Brooke Wolford
 Vandana Vandana  
 Andrew Morris  
 ## Live Troubleshooting Session
-Wednesday, 10 Deember 14:00-15:00
+Wednesday, 10 December 14:00-15:00  
 Please read the [Onboarding instructions](onboarding.md) before the troubleshooting session if possible and absolutely before Friday.  
 ## Software Requirements
 R 3.6.0+
