@@ -44,22 +44,28 @@ RStudio will automatically detect your R installation.
 
 You can orient yourself to RStudio using this [guide](RStudio.pdf).
 
-## Clone the repo
+## Setup RStudio Environment
 
-Open Rstudio and in the bottom left corner you'll see the Files pane. Navigate to a directory where you would like to keep these files. 
+1. Open Rstudio and in the bottom left corner you'll see the Files pane. Navigate to a directory where you would like to keep your work from this workshop. Select the triangle beside the "More" menu. Select "Open New Terminal Here"
 
-In the bottom left pane, select the Terminal pane and execute the following command.
+2. In the bottom left pane, select the Terminal tab. You are now located in the same folder that is shown under "Files". Execute the following command to clone the repository.
 
 ```
 git clone https://github.com/bnwolford/OBiWoW-2025.git
 ```
-Now you can navigate to 12_Friday > from-tidy-data-...
 
-If you are unable to get this working, you can simply download the setup.R script from this repository and place it somewhere on your computer where you can navigate to within RStudio.
+3. Now you can navigate to 12_Friday > from-tidy-data-... in the "Files" pane. Click on Setup.R. This will open in the top left pane.
 
-## Setup RStudio environment
+Note: If you are unable to get this working, you can simply download the [Setup.R](Setup.R) script from this repository and place it somewhere on your computer where you can navigate to within RStudio. Then open it and pick up with #4.
 
-1. Open the [Setup.R](Setup.R) script in RStudio. On mac, you can do this by File > Open File. 
-2. In the top left pane, you will see a button that says Source in the top right corner. Press this and it will run the Setup Script.
-3. In the bottom left console, read the output. If you did not pass all of the checks, something may be wrong.
+4. In the top left pane, you will see a button that says Source in the top right corner. Press this and it will run the Setup.R Script. It will install missing packages and let you know if your environment is ready for the workshop.
+
+5. In the bottom left console, read the output. If you did not pass all of the checks, something may be wrong.
+
+Note: If this has failed, you can try to install packages in the R console by executing the following command:
+
+```         
+install.packages(c("ggplot2", "tidymodels", "dplyr", "tidyr", "readr","workflows","tune","mlbench","ranger","randomForest"))
+```
+
 
