@@ -22,7 +22,7 @@ skip_features:
 Now we should have a new directory with the full nf-core scaffolding in place. An nf-core pipeline has a lot of boilerplate, and can be rather complex to navigate. Take a look around, try to see if there are things you can recognize from before, and look into these files. 
  
 Maybe you found the main.nf file in the root of our nf-core pipeline directory. Notice the include statements, the different workflow blocks and see if you can figure out the structure. Nf-core comes with 2 extra subworkflows, PIPELINE_INITIALISATION and PIPELINE_COMPLETION. The main.nf is just our entrypoint, and puts together the subworkflows when we are ready to run our pipeline. Our pipline is going to be defined in ```workflows/name.nf```.
-PIPELINE_INITIALISATION, does several things, but most importantly it handels the samplesheet.csv file and outputs the corresponding channel. Using a samplesheet is standard practise in most nf-core pipelines.
+PIPELINE_INITIALISATION, does several things, but most importantly it handels the samplesheet.csv file and outputs the corresponding channel. Using a samplesheet is standard practise in most nf-core pipelines, and the samplesheet channel is the expected input to many of the nf-core modules.
 
 First we will need to make our own samplesheet.csv and set up the input in the nextflow.config to point to it. We can look at one of the samplesheets that comes with the template, located at ```assets/samplesheet.csv``` for inspiration. Lets reuse the data we downloaded in the first practical session.
 
