@@ -46,15 +46,16 @@ You can orient yourself to RStudio using this [guide](RStudio.pdf).
 
 ## Clone the repo
 
-You may have been provided a Google Drive link to download the files from this repository. You should be sure you know where those files are, as we will use them in the instructions below. 
+Open Rstudio and in the bottom left corner you'll see the Files pane. Navigate to a directory where you would like to keep these files. 
 
-Another option is to clone this repository. Open Rstudio and in the bottom left corner you'll see the Files pane. Navigate to a directory where you would like to keep these files. In the bottom left pane, select the Terminal pane and execute the following command.
+In the bottom left pane, select the Terminal pane and execute the following command.
 
 ```
 git clone https://github.com/BioDataAnalysisLab/BioData-Training-School-2025.git
 ```
+Now you can navigate to 12_Friday > from-tidy-data-...
 
-Now you can navigate to Day1_IntroR within the new directory that was just created.
+If you are unable to get this working, you can simply download the setup.R script from this repository and place it somewhere on your computer where you can navigate to within RStudio.
 
 ## Setup RStudio environment
 
