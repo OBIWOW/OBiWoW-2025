@@ -18,7 +18,7 @@ Biomedical research increasingly relies on the ability to work responsibly with 
 | 12-13 | Lunch | |
 | 13-14 | Module: tidymodels | LINK | 
 | 14-15 | Activity: Modeling Sensitive Health Data | LINK |
-| 15-15:30 | Wrap-up | |
+| 15-16 | Wrap-up | |
 
 For the full Health AI in R curriculum, visit [https://bnwolford.github.io/HealthAIinR/](https://bnwolford.github.io/HealthAIinR/)
 
