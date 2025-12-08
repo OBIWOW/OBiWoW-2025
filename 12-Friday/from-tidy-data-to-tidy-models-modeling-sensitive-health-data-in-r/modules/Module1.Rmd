@@ -105,7 +105,7 @@ sessionInfo()
 
 ## Part 2: readr to read in data
 
-We are going to use example data from Software Carpentry. I have already downloaded it and included it in the directory where this code is. If the directory with this code is showing in the Files pane in the bottom right, you can click on the More and select "Copy Folder Path to Clipboard." Paste that path below where it says "PASTE HERE". Be sure to keep the quotations and remove the hashtag.
+We are going to use example data from Software Carpentry. I have already downloaded it and included it in the data directory. If the directory with this code is showing in the Files pane in the bottom right, you can click on the More and select "Copy Folder Path to Clipboard." Paste that path below where it says "PASTE HERE". Be sure to keep the quotations and remove the hashtag.
 
 ```{r}
 
