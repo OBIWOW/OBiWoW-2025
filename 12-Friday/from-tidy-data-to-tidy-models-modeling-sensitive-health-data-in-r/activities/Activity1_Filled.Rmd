@@ -1,5 +1,5 @@
 ---
-title: "Activity 1"
+title: "Activity 1 Filled"
 author: "Brooke Wolford"
 date: "2025-12-08"
 output: html_document
@@ -61,7 +61,7 @@ wei<-read_xpt("data/WHQ_L.xpt")
 
 #diabetes data has more samples than physical activity and weight, so let's do a left join with physicial activity as the anchoring file
 df<-left_join(pa,dia) %>% left_join(wei)
-
+nrow(df)
 
 ```
 
@@ -72,41 +72,41 @@ We now have a dataset with 8153 participants and 20 columns.
 ```{r}
 
 #use glimpse() to try to understand the data 
-
+glimpse(df)
 
 #let's make a variable for current BMI using the mutate function
 #BMI=weight in lbs * 703/height in inches squared
-
+df<-df %>% mutate(BMI=WHD020*703/WHD010^2)
 
 #use skim to look at the variables
-
+df %>% skim()
 
 #let's use mutate to rename the variables to more comprehensible names
-
+df<-df %>% mutate(Diabetes=DIQ010) %>% mutate(DiabetesAge=DID040) %>% mutate(Prediabetes=DIQ160) %>% mutate(mod_activity=PAD800) %>% mutate(vig_activity=PAD820) %>% mutate(seden_activity=PAD680)
 
 #check the names of the dataframe
-
+names(df)
 
 #let's subset to just these renamed variables and BMI
-
+sub<-df%>% select(Diabetes,DiabetesAge,Prediabetes,mod_activity,vig_activity,seden_activity,BMI)
 
 #let's use skim to look at the new data frame
-
+sub%>%skim()
 
 #how many people have been diagnosed with diabetes?
-
+sub %>% filter(Diabetes==1) %>% count(Diabetes)
 
 #what was the average age at diagnosis?
-
+sub %>% summarize(mean=mean(DiabetesAge,na.rm=TRUE))
 
 #how many people have pre-diabetes
-
+sub %>% filter(Prediabetes==1) %>% count(Prediabetes)
 
 #let's drop samples with a missing BMI
-
+sub2<-sub%>% drop_na(BMI)
 
 #how many samples do we have now?
-
+dim(sub2)
 
 ```
 
