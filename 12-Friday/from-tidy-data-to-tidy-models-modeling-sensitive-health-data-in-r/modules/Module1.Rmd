@@ -105,12 +105,12 @@ sessionInfo()
 
 ## Part 2: readr to read in data
 
-We are going to use example data from Software Carpentry. I have already downloaded it and included it in the data directory. If the directory with this code is showing in the Files pane in the bottom right, you can click on the More and select "Copy Folder Path to Clipboard." Paste that path below where it says "PASTE HERE". Be sure to keep the quotations and remove the hashtag.
+We are going to use example data from Software Carpentry. I have already downloaded it and included it in the data directory within the repository. In the Files tab on the bottom right panel, navigate to the folder `from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r`. Click on  "More" and select "Copy Folder Path to Clipboard." Paste that path below where it says "PASTE HERE". Be sure to keep the quotations and remove the hashtag.
 
 ```{r}
 
 #path<-"PASTE HERE"
-file<-"/sample.csv"
+file<-"/data/sample.csv"
 path<-paste0(path,file)
 
 ```
