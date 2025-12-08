@@ -65,7 +65,7 @@ Note: If you are unable to get this working, you can simply download the [Setup.
 Note: If this has failed, you can try to install packages in the R console by executing the following command:
 
 ```         
-install.packages(c("haven","skimr","ggplot2","stringr", "tidymodels", "dplyr", "tidyr", "readr","workflows","tune","mlbench","ranger","randomForest"))
+install.packages(c("haven","skimr","ggplot2","stringr", "tidymodels", "dplyr", "tidyr", "readr","workflows","tune","mlbench","ranger","randomForest","xgboost","janitor"))
 ```
 
 

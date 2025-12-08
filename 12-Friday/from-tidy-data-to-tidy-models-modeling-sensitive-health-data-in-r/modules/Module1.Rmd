@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ### License
 This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY 4.0). To view a copy of this license, visit: https://creativecommons.org/licenses/by/4.0/
 
+### Sources
+
 This lesson is based on content from Software Carpentry
 * https://swcarpentry.github.io/r-novice-inflammation/01-starting-with-data.html
 * https://datacarpentry.github.io/genomics-r-intro/05-dplyr.html
