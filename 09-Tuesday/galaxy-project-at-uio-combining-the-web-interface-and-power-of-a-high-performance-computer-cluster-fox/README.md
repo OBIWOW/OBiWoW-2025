@@ -39,17 +39,22 @@ Open the [Galaxy presentation](https://docs.google.com/presentation/d/1nmJh4OO_J
       - Tools (entire set of tools you can use) - LEFT
       - Menu of the selected tool (here you define how to run the tool) - CENTER
       - History (your individual workspace) - RIGHT
-4. Create a new history in the history pannel. Click on the + sign in the right upper corner and change the name by clicking on the name.
-5. Upload the file `two-column-table.txt` to Galaxy. This will be your first dataset in Galaxy-FOX. Let's do something with it -:)
-6. SINGLE JOBS - 1 
+4. Create a new history in the history pannel. Click on the + sign in the right upper corner and change the name by clicking on the name. Let's call it *OBiWoW2025*
+5. Upload a dataset:
+      - Go to `Upload` in the `Tools` menu and click on `Upload`
+      - In the pop-up window, `Choose local file` and pick `two-column-table.txt` (the file which you have just downloaded at step 1)
+      - Select `Type : txt` instead of `Auto-detect` and click on `Start`.
+        
+   This will be your first dataset in Galaxy-FOX. Let's do something with it -:)
+7. SINGLE JOBS - 1 
       - Select the tool group `Text Manipulation` and then the tool `Convert delimiters to TAB`
       - Select the dataset `two-column-table.txt` from History, select `Commas` from the `Convert all` parameter, and run the job.
       - Examine the result.
-7. SINGLE JOBS - 2
+8. SINGLE JOBS - 2
       - Select the tool group `Text Manipulation` and then the tool `Line/Word/Character count of a dataset`.
       - Select the dataset `Convert on data X` and run the job.
       - Examine the result.
-8. WORKFLOW
+9. WORKFLOW
       - Create
           - Select `Workflows` on the top menu and click on `+Create`
           - Select the tool group `Inputs` and then the tool `Input dataset`
@@ -60,18 +65,19 @@ Open the [Galaxy presentation](https://docs.google.com/presentation/d/1nmJh4OO_J
           - Select `Workflows` on the top menu, choose a workflow and run it by clicking on the white arrow on blue background on the right
       - Export
           - Select `Workflows` on the top menu, choose a workflow and export it by clicking on the blue arrow in the right upper corner of the workflow box
-9. WORKFLOW
+          - Before this you have to make the workflow accessible : Select `Workflows` on the top menu, choose a workflow and click on the `Share` icon in the line with workflow buttons.
+10. WORKFLOW
       - Extract from steps 6 & 7
       - Go to the three horisontal lines on the top of History and select `Extract workflow` in the dropdown
       - Check `two-column-table.txt` from History Items (green fields) section
       - Check `Include "Convert" in workflow` and `Include "Line/Word/Character count" in workflow` from Tools section
       - Click on `Create Workflow` button on top
-10. DATA LIBRARIES
+11. DATA LIBRARIES
       - Create : go to `Data` > `Data Libraries`
       - Click on `+Libraries` and set Name/Description/Synopsis, then Save
       - Add Folders and Datasets into folders
       - Manage each folder or dataset by giving permissions over these entities to other users
-11. VISUALIZATION
+12. VISUALIZATION
       - Select `Visualize` from the top menu
       - Select Line chart (NVD3) and then `Convert on data X`
       - Select Pie Chart (NVD3) and then `Convert on data X`
