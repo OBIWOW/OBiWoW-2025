@@ -1,0 +1,34 @@
+---
+title: "Activity 1"
+author: "Brooke Wolford"
+date: "2025-12-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We are reading in data from the National Health and Nutrition Examination Survey from August 2021-August 2023. The complete set of data is available [here](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire&Cycle=2021-2023).
+
+These are in a x.pt format which is a SAS Transport file format for data sharing and can be read into R with the `haven` package.
+
+The documentation for the files can be found here:
+[diabetes](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DIQ_L.htm)
+[physical activity](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/PAQ_L.htm)
+
+The join functions are important within dplyr. You can read more [here](https://dplyr.tidyverse.org/reference/mutate-joins.html).
+
+```{r}
+
+#install.packages("haven")
+library(haven)
+
+#diabetes
+dia<-read_xpt("data/DIQ_L.xpt")
+
+#physical activity
+pa<-read_xpt("data/PAQ_L.xpt")
+
+#diabetes data has more samples than physical activity, so let's do a left join with physicial actvitiy as the anchoring file
+df<-left_join(pa,dia)
