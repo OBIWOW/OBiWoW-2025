@@ -39,7 +39,7 @@ nf-core interface
 ## RNA-seq sample data ##
 
 ```
-"https://github.com/nf-core/test-datasets/tree/rnaseq"
+"https://github.com/nf-core/tesput-datasets/tree/rnaseq"
 ```
 
 ## Demo pipeline ##
