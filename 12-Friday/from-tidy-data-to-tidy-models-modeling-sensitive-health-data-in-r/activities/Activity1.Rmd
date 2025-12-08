@@ -9,6 +9,33 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Actvitiy 1
+
+Objective: Use information from Module 1 to read in sensitive data and filter to relevant variables
+
+### Pair programming
+
+Pair programming is a technique where two programmers work together at one workstation. One programmer, the driver, writes the code, while the other, the navigator, reviews the code as it's being written and offers suggestions. The goal is to learn from each other. It's best practice to switch driver and navigator roles roughly every 10 minutes or whenever you come to a natural break point.
+
+### Set up environment
+
+
+```{r}
+
+#install.packages("haven")
+library(haven)
+library(tidyr)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(skimr)
+
+sessionInfo()
+
+```
+
+### Reading in the data
+
 We are reading in data from the National Health and Nutrition Examination Survey from August 2021-August 2023. The complete set of data is available [here](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire&Cycle=2021-2023).
 
 These are in a x.pt format which is a SAS Transport file format for data sharing and can be read into R with the `haven` package.
@@ -16,19 +43,45 @@ These are in a x.pt format which is a SAS Transport file format for data sharing
 The documentation for the files can be found here:
 [diabetes](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DIQ_L.htm)
 [physical activity](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/PAQ_L.htm)
+[weight](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/WHQ_L.htm)
 
 The join functions are important within dplyr. You can read more [here](https://dplyr.tidyverse.org/reference/mutate-joins.html).
 
+This data could be used to ask a lot of questions. Take time to look into the documentation about the variables. What kind of hypotheses do you have based on what you have seen so far? Think about what you might like to research using AI methods. We will continue with this dataset in the next two activities.
+
 ```{r}
-
-#install.packages("haven")
-library(haven)
-
 #diabetes
 dia<-read_xpt("data/DIQ_L.xpt")
 
 #physical activity
 pa<-read_xpt("data/PAQ_L.xpt")
 
-#diabetes data has more samples than physical activity, so let's do a left join with physicial actvitiy as the anchoring file
-df<-left_join(pa,dia)
+#weight
+wei<-read_xpt("data/WHQ_L.xpt")
+
+#diabetes data has more samples than physical activity and weight, so let's do a left join with physicial activity as the anchoring file
+df<-left_join(pa,dia) %>% left_join(wei)
+nrow(df)
+
+```
+
+We now have a dataset with 8153 participants and 20 columns.
+
+### Tidying the data
+
+```{r}
+
+#use glimpse() to try to understand the data 
+glimpse()
+
+#let's make a variable for current BMI using the mutate function
+#BMI=weight in lbs * 703/height in inches squared
+df<-df %>% mutate(BMI=WHD020*703/WHD010^2)
+
+
+df %>% skim()
+
+```
+
+
+
