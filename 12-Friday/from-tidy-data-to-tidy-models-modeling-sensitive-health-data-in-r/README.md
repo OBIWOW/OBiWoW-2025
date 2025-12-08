@@ -11,8 +11,7 @@ Biomedical research increasingly relies on the ability to work responsibly with 
 | Time | Topic | File |
 |---|---|---|
 | 8:30 - 9 | Set-up troubleshooting | [onboarding.md](onboarding.md) |
-| 9-10 | Module: tidyr and dplyr | [Module1](modules/Module1.Rmd)
-[Module 1 Working Copy](modules/Module1_working.Rmd) |
+| 9-10 | Module: tidyr and dplyr | [Module1](modules/Module1.Rmd) and [Module 1 Working Copy](modules/Module1_working.Rmd) |
 | 10-11 | Activity: Using Sensitive Health Data | [Activity1](activities/Activity1.Rmd) |
 | 11-11:30 | Module: ggplot2 | LINK |
 | 11:30-12:00 | Activity: Visualing Sensitive Health Data | LINK |
