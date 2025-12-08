@@ -39,7 +39,7 @@ Open the [Galaxy presentation](https://docs.google.com/presentation/d/1nmJh4OO_J
       - Tools (entire set of tools you can use) - LEFT
       - Menu of the selected tool (here you define how to run the tool) - CENTER
       - History (your individual workspace) - RIGHT
-4. Create a new history in the history pannel. Click on the + sign in the right upper corner.
+4. Create a new history in the history pannel. Click on the + sign in the right upper corner and change the name by clicking on the name.
 5. Upload the file `two-column-table.txt` to Galaxy. This will be your first dataset in Galaxy-FOX. Let's do something with it -:)
 6. SINGLE JOBS - 1 
       - Select the tool group `Text Manipulation` and then the tool `Convert delimiters to TAB`
