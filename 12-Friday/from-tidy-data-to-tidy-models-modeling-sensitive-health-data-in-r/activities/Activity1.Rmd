@@ -123,6 +123,11 @@ Ultimately, the responsible use of sensitive data is essential for building publ
 
 #how many samples do we have now?
 
+#let's write out the sub2 data frame in a comma separated value file we can use later
+out_path<-paste0(getwd(),"/data/NHANES.csv")
+#use write_csv()
+#this file wrote into our working directory, within the data directory, and is named NHANES.csv
+
 
 ```
 

@@ -123,6 +123,11 @@ sub2<-sub%>% drop_na(BMI)
 #how many samples do we have now?
 dim(sub2)
 
+#let's write out the sub2 data frame in a comma separated value file we can use later
+out_path<-paste0(getwd(),"/data/NHANES.csv")
+write_csv(sub2,out_path)
+#this file wrote into our working directory, within the data directory, and is named NHANES.csv
+
 ```
 
 

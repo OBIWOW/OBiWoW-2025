@@ -1,5 +1,5 @@
 ---
-title: "Activity 2 Filled"
+title: "Activity 2"
 author: "Brooke Wolford"
 date: "2025-12-08"
 output: html_document
@@ -59,19 +59,17 @@ Let's start by creating a violin plot that shows the distribution of BMI by Diab
 ```{r}
 
 #use geom_violin() with Diabetes on the x-axis and BMI on the y-axis
-df %>% ggplot(aes(x=Diabetes,y=BMI)) + geom_violin()
+
 
 #that didn't look as we expected, why not? 
 #HINT use glimpse() to check the column classes
-glimpse(df)
+
 
 #Diabetes is being considered as a double or numeric class instead of a factor so the x-axis is continuous rather than categorical
 #Let's change the class
 
-df <- df %>% mutate(Diabetes=as.factor(Diabetes))
-
 #now let's try the plot again
-df %>% ggplot(aes(x=Diabetes,y=BMI)) + geom_violin()
+
 
 ```
 
@@ -87,7 +85,7 @@ The y-axis is way larger than we would expect for BMI. What is going on? Use the
 ```{r}
 
 #use skim to look at the distribution of BMI
-df %>% filter(BMI>200) %>% count()
+
 
 ```
 
@@ -97,53 +95,43 @@ If you recall, we created the BMI variable. It's likely that some of the height 
 ```{r}
 
 #save a new data frame that has BMI outliers excluded
-df2<-df %>% mutate(
-  q1=quantile(BMI,0.25),
-  q3=quantile(BMI,0.75),
-  iqr=q3-q1
-) %>% filter(BMI>q1-1.5*iqr & BMI<q3+1.5*iqr) %>% select(-c(q1,q3,iqr))
+
 
 #use nrow() to figure out how many samples we lost
-nrow(df)
-nrow(df2)
+
 
 #what is the distribution of BMI now?
-skim(df2)
+
 
 #now let's try the plot again
-df2 %>% ggplot(aes(x=Diabetes,y=BMI)) + geom_violin()
+
 
 #try adding a boxplot with a narrow width so it fits inside the violin plot
-df2 %>% ggplot(aes(x=Diabetes,y=BMI)) + geom_violin() + geom_boxplot(width=0.15)
+
 
 #let's make every diabetes status a different color to fill the violin plots
-df2 %>% ggplot(aes(x=Diabetes,y=BMI,fill=Diabetes)) + geom_violin() + geom_boxplot(width=0.15)
+
 
 #let's add our own colors
-df2 %>% ggplot(aes(x=Diabetes,y=BMI,fill=Diabetes)) + geom_violin() + geom_boxplot(width=0.15) + scale_fill_manual(values=c("goldenrod3","orchid4","lightblue","darkgreen"))
+
 
 #let's remove the legend since we will label the x-axis
-df2 %>% ggplot(aes(x=Diabetes,y=BMI,fill=Diabetes)) + geom_violin() + geom_boxplot(width=0.15) + scale_fill_manual(values=c("goldenrod3","orchid4","lightblue","darkgreen"))
+
 
 #let's rename the labels
-df2 %>% ggplot(aes(x=Diabetes,y=BMI,fill=Diabetes)) + geom_violin() + geom_boxplot(width=0.15) + scale_fill_manual(values=c("goldenrod3","orchid4","lightblue","darkgreen")) 
-  scale_x_discrete(labels=c("1"="Diabetes","2"="No Diabetes","3"="Borderline Diabetes","9"="Unsure"))
+
 
 #let's use remove the legend since we have labels on the x axis
-df2 %>% ggplot(aes(x=Diabetes,y=BMI,fill=Diabetes)) + geom_violin() + geom_boxplot(width=0.15) + scale_fill_manual(values=c("goldenrod3","orchid4","lightblue","darkgreen")) + 
-   scale_x_discrete(labels=c("1"="Diabetes","2"="No Diabetes","3"="Borderline Diabetes","9"="Unsure")) +   theme(legend.position="none") 
+
 
 #let's use a pre-defined theme to make a white background
-df2 %>% ggplot(aes(x=Diabetes,y=BMI,fill=Diabetes)) + geom_violin() + geom_boxplot(width=0.15) + scale_fill_manual(values=c("goldenrod3","orchid4","lightblue","darkgreen")) + 
-   scale_x_discrete(labels=c("1"="Diabetes","2"="No Diabetes","3"="Borderline Diabetes","9"="Unsure")) +   theme_bw() + theme(legend.position="none")
+
 
 #let's add a title
-df2 %>% ggplot(aes(x=Diabetes,y=BMI,fill=Diabetes)) + geom_violin() + geom_boxplot(width=0.15) + scale_fill_manual(values=c("goldenrod3","orchid4","lightblue","darkgreen")) + 
-   scale_x_discrete(labels=c("1"="Diabetes","2"="No Diabetes","3"="Borderline Diabetes","9"="Unsure")) +   theme_bw() + theme(legend.position="none") + labs(title="BMI by Diabetes status in NHANES")
+
 
 
 ```
 
 
   
-
