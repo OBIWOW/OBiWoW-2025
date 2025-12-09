@@ -12,11 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Activity 2
 
-Objective: Use information from Module 2 to visualize
+Objective: Use information from Module 2 to visualize data with ggplot2
 
-### Pair programming
-
-Pair programming is a technique where two programmers work together at one workstation. One programmer, the driver, writes the code, while the other, the navigator, reviews the code as it's being written and offers suggestions. The goal is to learn from each other. It's best practice to switch driver and navigator roles roughly every 10 minutes or whenever you come to a natural break point.
+Please use the pair programming approach again.tor roles roughly every 10 minutes or whenever you come to a natural break point.
 
 ### Set up environment
 

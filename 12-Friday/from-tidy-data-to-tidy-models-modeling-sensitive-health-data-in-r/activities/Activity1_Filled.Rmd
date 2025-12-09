@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Actvitiy 1
+# Activity 1
 
 Objective: Use information from Module 1 to read in sensitive data and filter to relevant variables
 
@@ -48,6 +48,7 @@ The documentation for the files can be found here:
 The join functions are important within dplyr. You can read more [here](https://dplyr.tidyverse.org/reference/mutate-joins.html).
 
 This data could be used to ask a lot of questions. Take time to look into the documentation about the variables. What kind of hypotheses do you have based on what you have seen so far? Think about what you might like to research using AI methods. We will continue with this dataset in the next two activities.
+
 First, we need to set the working directory to the github repository. In the Files tab in the lower right panel, navigate to the "from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r" directory. Select the arrow beside of "More" and "Copy Folder Path to Clipboard." Paste that below within quotes as an argument for the `setwd()` function as illustrated below.
 
 ```{r}

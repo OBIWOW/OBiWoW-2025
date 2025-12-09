@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Actvitiy 1
+# Activity 1
 
 Objective: Use information from Module 1 to read in sensitive data and filter to relevant variables
 

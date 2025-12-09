@@ -107,6 +107,8 @@ Training data is used for the model training and hyperparameter tuning. Once tra
 
 This split can be done automatically using the inital_split() function (from rsample) which creates a special “split” object.
 
+It is important to set a random seed beore using a function that uses randomness (e.g. shuffling data, sampling, or simulations). This allows you to get the exact same sequence of random numbers each time and makes your code testable.
+
 ```{r}
 
 set.seed(1234) #set a seed so we have a reproducible split
