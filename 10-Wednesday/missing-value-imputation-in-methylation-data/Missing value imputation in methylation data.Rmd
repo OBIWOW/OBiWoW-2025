@@ -1,0 +1,102 @@
+---
+title: "Missing value imputation in methylation data"
+author: "Anna Plaksienko"
+date: "2025-12-10"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(stats)
+```
+
+## Our data
+
+I used GSE199057 GEO dataset. I randomly chose 15 samples from controls and 15 samples from colon cancer patients, so 30 samples in total. You have already constructed beta matrix from .idat files, no extra steps. 
+
+### Import the data
+
+```{r O1: load the data}
+#path <- setwd(PUT THE PATH to your .Rdata object)
+load("beta.Rdata")
+load("phenodata.Rdata")
+```
+
+### How many NAs do we have?
+
+Let's explore out data and see, how many NAs we have. Remember, that this is real data, with no alterations from our side (yet).
+
+```{r How many NAs?}
+#How many NA values overall?
+sum(is.na(beta))
+#What percentage of the dataset that is?
+sum(is.na(beta)) / (dim(beta)[1] * dim(beta)[2]) * 100
+#How many probes have at least one NA?
+sum(colSums(is.na(beta)) > 0)
+```
+
+This is a good point to check for probes and samples that may have low quality.
+```{r Check quality}
+message("What's the maximum amount of NAs on each sample?")
+sort(rowSums(is.na(beta)), decreasing = TRUE)[1:5]
+message("What's the maximum amount of NAs on each probe?")
+sort(colSums(is.na(beta)), decreasing = TRUE)[1:5]
+```
+
+Probe cg06180910 is missing in 29 out of 30 samples. It would not be possible to impute it with _methyLImp_ since there is not enough data for imputation. More importantly, unless you have a biological reason to suspect this behaviour is meaningful for this probe, it looks like a technical failure to me. We will discard it.
+
+```{r Discard a probe}
+beta <- beta[, colnames(beta) != "cg06180910"]
+sum(is.na(beta))
+```
+
+## Install methyLImp2
+
+The package is available on Bionconductor.
+
+```{r Install methyLImp2}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("methyLImp2")
+
+library(methyLImp2)
+```
+
+## Try methyLImp2
+
+### Default
+
+Let's impute! By default the only thing you need to provide is the dataset and what type of technology you have. The method will split the data by chromosomes according to internal annotation (taken from Illumina website). It will use all your physical cores, except one. 
+
+However, we know we have healthy individuals and patients and it's better to impute them independently. We can provide that grouping information to methyLImp.
+
+```{r methyLImp2}
+time_default <- system.time(beta_imputed <- 
+                                methyLImp2(beta, 
+                                           type = "EPIC",
+                                           groups = phenodata$`disease state:ch1`))[3]
+sum(is.na(beta_imputed))
+```
+
+As we can see, for some reason not all NAs were imputed! We can see a warning from the package: some probes are not in the annotation, so they were not imputed. They were probably not in the annotation because there was no chromosome match. Either drop this probes or provide custom annotation to solve this problem.
+
+### Play with parameters
+
+You can now play with different settings to see how the running time changes. Since our dataset is not that big (only 30 samples), maybe the change won't be that big, but we can experiment. Here are some suggestions:
+
+```{r methyLImp2 less cores}
+time_less_cores <- system.time(beta_imputed <- 
+                                   methyLImp2(beta, 
+                                              type = "EPIC", 
+                                              BPPARAM = BiocParallel::SnowParam(workers = 1)))[3]
+print(time_default)
+print(time_less_cores)
+```
+
+```{r methyLImp2 mini-batch}
+time_minibatch <- system.time(beta_imputed <- 
+                                   methyLImp2(beta, type = "EPIC", 
+                                              minibatch_frac = 0.5))[3]
+print(time_default)
+print(time_minibatch)
+```
