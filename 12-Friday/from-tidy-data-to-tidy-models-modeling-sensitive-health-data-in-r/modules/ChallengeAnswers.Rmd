@@ -82,10 +82,9 @@ Task: Given a data frame of patients' inflammatory measures over time, create a 
 #####################################################################
 
 #Use the blue wheel in the Files pane to "Set Working Directory as the root directory 
-#this will execute a command in the Console that is like this
+#this will execute a command in the Console to set the directory
+#copy and paste that command below to set the working directory within the .Rmd chunk if you want to execute code within the .Rmd
 #setwd("/your/path/OBiWoW-2025/12-Friday/from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r")
-#place that command to set the working directory within the chunk if you want to execute code within the .Rmd
-setwd("~/Documents/MyStuff/Misc/Coding/GitHub/OBiWoW-2025/12-Friday/from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r")
 
 #if you are in the root directory, you can just load the data space created by Setup.R/CreateData.R
 load("workshop_data.RData")
