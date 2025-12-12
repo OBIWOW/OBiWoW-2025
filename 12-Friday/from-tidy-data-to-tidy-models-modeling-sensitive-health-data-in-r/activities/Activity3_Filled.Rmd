@@ -32,6 +32,7 @@ library(readr)
 library(ggplot2)
 library(skimr)
 library(tidymodels)
+library(patchwork)  #merging ggplot2 plots
 library(vip)        # variable importance
 library(ranger)     # random forest engine
 
@@ -68,7 +69,7 @@ wei<-read_xpt("data/WHQ_L.xpt")
 df<-left_join(pa,dia) %>% left_join(wei)
 
 #let's use mutate to rename the variables to more comprehensible names
-nhanes<-df %>% mutate(Diabetes=DIQ010) %>% mutate(DiabetesAge=DID040) %>% mutate(Prediabetes=DIQ160) %>% mutate(mod_activity=PAD800) %>% mutate(vig_activity=PAD820) %>% mutate(seden_activity=PAD680)
+nhanes<-df %>% mutate(diabetes=as.factor(DIQ010)) %>% mutate(diabetesAge=DID040) %>% mutate(prediabetes=as.factor(DIQ160)) %>% mutate(mod_activity=PAD800) %>% mutate(vig_activity=PAD820) %>% mutate(seden_activity=PAD680) %>% mutate(weight=WHD020)
 
 ```
 
@@ -81,41 +82,89 @@ Your goal is the following:
 * Create visualization
 * Interpret the model and findings
 
-### Exploratory Data Analysis
+### Exploratory Data Analysis and Data Cleaning
+
+Looking at distributions of variables that you'd like to use in the models. One suggestion is to use weight and activity levels to predict diabetes status.
 
 ```{r}
 
-
 glimpse(nhanes)
-summary(nhanes$weight)
-summary(nhanes$phys_act)
-table(nhanes$diabetes)
+skim(nhanes)
 
 # visualize distributions
-library(ggplot2)
 p1 <- ggplot(nhanes, aes(x = weight)) + geom_histogram(bins = 30) + ggtitle("Weight")
-p2 <- ggplot(nhanes, aes(x = phys_act)) + geom_histogram(bins = 30) + ggtitle("Physical activity")
-p3 <- ggplot(nhanes, aes(x = diabetes, y = weight)) + geom_boxplot() + ggtitle("Weight by diabetes")
-p4 <- ggplot(nhanes, aes(x = diabetes, y = phys_act)) + geom_boxplot() + ggtitle("Phys act by diabetes")
-(p1 + p2) / (p3 + p4)
+p2 <- ggplot(nhanes, aes(x = vig_activity)) + geom_histogram(bins = 30) + ggtitle("Vigorous physical activity")
+p3 <- ggplot(nhanes,aes(x=mod_activity)) + geom_histogram(bins = 30) + ggtitle("Moderate physical activity")
+p4 <- ggplot(nhanes, aes(x = diabetes, y = weight)) + geom_boxplot() + ggtitle("Weight by diabetes")
+p5 <- ggplot(nhanes, aes(x = diabetes, y = vig_activity)) + geom_boxplot() + ggtitle("Vigorous physical activity by diabetes")
+p6 <- ggplot(nhanes, aes(x = diabetes, y = mod_activity)) + geom_boxplot() + ggtitle("Moderate physical activity by diabetes")
+(p1 + p2 + p3) / (p3 + p4 + p6)
 
-# ---------- 2. Train/test split ----------
+```
+
+Let's remove outliers for the variables we are interested in. From the visualization, you may have seen some obvious ones.
+
+```{r}
+
+#remove outliers outside of 1.5 IQR
+nhanes<-nhanes %>% mutate(
+  q1=quantile(weight,0.25,na.rm=TRUE),
+  q3=quantile(weight,0.75,na.rm=TRUE),
+  iqr=q3-q1
+) %>% filter(weight>q1-1.5*iqr & weight<q3+1.5*iqr) %>% mutate(
+  q1=quantile(vig_activity,0.25,na.rm=TRUE),
+  q3=quantile(vig_activity,0.75,na.rm=TRUE),
+  iqr=q3-q1
+) %>% filter(vig_activity>q1-1.5*iqr & vig_activity<q3+1.5*iqr)  %>% mutate(
+   q1=quantile(mod_activity,0.25,na.rm=TRUE),
+  q3=quantile(mod_activity,0.75,na.rm=TRUE),
+  iqr=q3-q1 
+) %>% filter(mod_activity>q1-1.5*iqr & mod_activity<q3+1.5*iqr) %>%   select(-c(q1,q3,iqr))
+  
+  skim(nhanes)
+
+  #visualization again
+p1 <- ggplot(nhanes, aes(x = weight)) + geom_histogram(bins = 30) + ggtitle("Weight")
+p2 <- ggplot(nhanes, aes(x = vig_activity)) + geom_histogram(bins = 30) + ggtitle("Vigorous physical activity")
+p3 <- ggplot(nhanes,aes(x=mod_activity)) + geom_histogram(bins = 30) + ggtitle("Moderate physical activity")
+p4 <- ggplot(nhanes, aes(x = diabetes, y = weight)) + geom_boxplot() + ggtitle("Weight by diabetes")
+p5 <- ggplot(nhanes, aes(x = diabetes, y = vig_activity)) + geom_boxplot() + ggtitle("Vigorous physical activity by diabetes")
+p6 <- ggplot(nhanes, aes(x = diabetes, y = mod_activity)) + geom_boxplot() + ggtitle("Moderate physical activity by diabetes")
+(p1 + p2 + p3) / (p3 + p4 + p6)
+
+#to make future analysis easier, let's exclude the prediabetic and unknown individuals
+#we want to also drop the now empty 3 and 9 factors, or we will run into problems later
+nrow(nhanes)
+nhanes<-nhanes %>% filter(diabetes==1|diabetes==2) %>% mutate(diabetes=droplevels(diabetes))
+nrow(nhanes)
+
+```
+
+### Create training and testing data
+
+```{r}
+# ---------- Train/test split ----------
 set.seed(2025)
 data_split <- initial_split(nhanes, prop = 0.8, strata = diabetes)
 train_data <- training(data_split)
 test_data  <- testing(data_split)
 
-# ---------- 3. Cross-validation folds ----------
-set.seed(2025)
+# ---------- Cross-validation folds ----------
+
 cv_folds <- vfold_cv(train_data, v = 5, strata = diabetes)
 
-# ---------- 4. Recipe: impute + normalize ----------
+```
+
+### Create recipe and workflow
+
+```{r}
+# ---------- 4. Recipe: impute missing data + normalize variables  ----------
 # If phys_act is a factor in your data, change steps accordingly.
-rec <- recipe(diabetes ~ weight + phys_act, data = train_data) %>%
+rec <- recipe(diabetes ~ weight + vig_activity + mod_activity, data = train_data) %>%
   step_impute_median(all_numeric_predictors()) %>%
   step_normalize(all_numeric_predictors())
 
-# ---------- 5a. Model specs: logistic regression ----------
+# ---------- 5a. Recipe and Workflow: logistic regression ----------
 log_spec <- logistic_reg() %>%
   set_engine("glm") %>%
   set_mode("classification")
@@ -124,7 +173,7 @@ log_wf <- workflow() %>%
   add_model(log_spec) %>%
   add_recipe(rec)
 
-# ---------- 5b. Model specs: random forest (tunable) ----------
+# ---------- 5b. Recipe and Workflow: random forest (tunable) ----------
 rf_spec <- rand_forest(
   trees = 1000,
   mtry = tune(),
@@ -140,8 +189,15 @@ rf_wf <- workflow() %>%
 # ---------- 6. Metrics ----------
 metrics <- metric_set(roc_auc, sens, spec, accuracy, kap)  # ROC AUC primary
 
-# ---------- 7. Fit logistic regression on CV (for comparison) ----------
-set.seed(2025)
+
+```
+
+### Fit the statistical models in the training data
+
+```{r}
+# ---------- 7. Fit logistic regression on CV folds  ----------
+
+#fit_resamples computes performance metrics across resamples
 log_res <- fit_resamples(
   log_wf,
   resamples = cv_folds,
@@ -149,10 +205,14 @@ log_res <- fit_resamples(
   control = control_resamples(save_pred = TRUE)
 )
 
+#use the collect samples to function to look at the metrics nicely
 collect_metrics(log_res)
 
+#let's try to understand how these metrics are coded in the log_res variable
+glimpse(log_res)
+
 # ---------- 8. Tune random forest ----------
-set.seed(2025)
+
 rf_grid <- grid_random(
   mtry(range = c(1L, 2L)),
   min_n(range = c(2L, 20L)),
@@ -167,6 +227,7 @@ rf_tune_res <- tune_grid(
   control = control_grid(save_pred = TRUE)
 )
 
+#we use the show_best function for optimizing the tuning
 show_best(rf_tune_res, "roc_auc")
 
 # pick best by roc_auc
@@ -174,9 +235,13 @@ best_rf <- select_best(rf_tune_res, "roc_auc")
 
 # finalize the workflow
 final_rf_wf <- finalize_workflow(rf_wf, best_rf)
+```
 
+### Use optimized models on the test set
+
+```{r}
 # ---------- 9. Last fit on the held-out test set ----------
-set.seed(2025)
+
 rf_last_fit <- last_fit(final_rf_wf, data_split, metrics = metrics)
 
 # logistic last fit for direct comparison
@@ -205,7 +270,7 @@ p_roc <- ggplot() +
 p_roc
 
 # ---------- 11. Calibration (binned) ----------
-library(dplyr)
+
 calib_rf <- rf_preds %>%
   mutate(prob_bin = ntile(.pred_yes, 10)) %>%
   group_by(prob_bin) %>%
@@ -239,8 +304,6 @@ cat("Random forest test metrics:\n")
 print(rf_res_test)
 cat("Logistic regression test metrics:\n")
 print(log_res_test)
-
-
 
 
 ```
