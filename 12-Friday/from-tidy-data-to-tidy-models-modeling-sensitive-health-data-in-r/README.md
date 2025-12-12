@@ -15,10 +15,10 @@ Biomedical research increasingly relies on the ability to work responsibly with 
 | 10:15-10:30 | Pause || 
 | 10:30-11:30 | Activity 1: Using Sensitive Health Data | [Activity1 Filled](activities/Activity1_Filled.Rmd) and [Activity1](activities/Activity1.Rmd) |
 | 11:30-12:00 | Module 2: ggplot2 | [Module2](modules/Module2.Rmd) and [Module 2 Working Copy](modules/Module2_working.Rmd) |
-| 12-13 | Lunch | |
+| 12:00-13:00 | Lunch | |
 | 13-13:45 | Activity 2: Visualing Sensitive Health Data | [Activity2 Filled](activities/Activity2_Filled.Rmd) and [Activity2](activities/Activity2.Rmd) | 
 | 13:45-14:00 | Pause || 
-| 14-15 | Module 3: tidymodels | [Module3](modules/Module3.Rmd) | 
+| 14:00-15:00 | Module 3: tidymodels | [Module3](modules/Module3.Rmd) | 
 | 15-15:45 | Activity: Modeling Sensitive Health Data | [Activity3 Filled](activities/Activity3_Filled.Rmd) and [Activity3](activities/Activity3.Rmd) | |
 | 15:45-16 | Wrap-up | |
 
