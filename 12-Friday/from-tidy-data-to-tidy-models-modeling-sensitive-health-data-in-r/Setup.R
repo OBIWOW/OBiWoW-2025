@@ -41,6 +41,13 @@ results[["plotting"]] <- tryCatch({
   TRUE
 }, error = function(e) FALSE)
 
+# Make .RData
+results[["read_data"]] <- tryCatch({
+source("CreateData.R")
+  TRUE
+}, error = function(e) FALSE)
+
+
 ###############################################
 # PASS / FAIL SUMMARY
 ###############################################
