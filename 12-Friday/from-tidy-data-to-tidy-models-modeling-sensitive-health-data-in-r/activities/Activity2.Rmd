@@ -1,0 +1,135 @@
+---
+title: "Activity 2"
+author: "Brooke Wolford"
+date: "2025-12-08"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Activity 2
+
+Objective: Use information from Module 2 to visualize data with ggplot2
+
+Please use the pair programming approach again.
+
+### Set up environment
+
+
+```{r}
+
+library(haven)
+library(tidyr)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(skimr)
+
+sessionInfo()
+
+```
+
+### Reading in the data
+
+As in Activity 1, we are reading in data from the National Health and Nutrition Examination Survey from August 2021-August 2023. The complete set of data is available [here](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire&Cycle=2021-2023).
+
+If you remember, we used the join function to join diabetes, weight, and physical activity data frames into one data frame. We tidied it up and wrote it out a file called NHANES.csv. Let's read that file in.
+
+As before, we need to set the working directory to the github repository. In the Files tab in the lower right panel, navigate to the "from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r" directory. Select the arrow beside of "More" and "Copy Folder Path to Clipboard." Paste that below within quotes as an argument for the `setwd()` function as illustrated below.
+
+```{r}
+
+#set working directory
+#setwd("OBiWoW-2025/12-Friday/from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r/")
+
+#diabetes
+df<-read_csv("data/NHANES.csv")
+
+```
+
+### Plotting
+
+Let's start by creating a violin plot that shows the distribution of BMI by Diabetes status.
+
+```{r}
+
+#use geom_violin() with Diabetes on the x-axis and BMI on the y-axis
+
+
+#that didn't look as we expected, why not? 
+#HINT use glimpse() to check the column classes
+
+
+#Diabetes is being considered as a double or numeric class instead of a factor so the x-axis is continuous rather than categorical
+#Let's change the class
+
+#now let's try the plot again
+
+
+```
+
+Look at your plot. What values are now on the x-axis? Check the documentation to remind yourself what these mean.
+
+The documentation for the files can be found here:
+[diabetes](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DIQ_L.htm)
+[physical activity](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/PAQ_L.htm)
+[weight](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/WHQ_L.htm)
+
+The y-axis is way larger than we would expect for BMI. What is going on? Use the `skim()` function to look at the distribution of BMI (p0,p25,p50,p75, and p100 are the percentiles). 
+
+```{r}
+
+#use skim to look at the distribution of BMI
+
+
+```
+
+
+If you recall, we created the BMI variable. It's likely that some of the height and weight measurements were incorrect, leading us to have outliers in BMI. A common rule of thumb for excluding outliers is removing variables that have a value outside the range of 1.5 times the interquartile range. Let's follow that rule.
+
+```{r}
+
+#save a new data frame that has BMI outliers excluded
+
+
+#use nrow() to figure out how many samples we lost
+
+
+#what is the distribution of BMI now?
+
+
+#now let's try the plot again
+
+
+#try adding a boxplot with a narrow width so it fits inside the violin plot
+
+
+#let's make every diabetes status a different color to fill the violin plots
+
+
+#let's add our own colors
+
+
+#let's remove the legend since we will label the x-axis
+
+
+#let's rename the labels
+
+
+#let's use remove the legend since we have labels on the x axis
+
+
+#let's use a pre-defined theme to make a white background
+
+
+#let's add a title
+
+
+
+```
+
+
+  
