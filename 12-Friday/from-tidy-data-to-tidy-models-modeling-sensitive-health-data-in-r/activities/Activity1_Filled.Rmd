@@ -1,0 +1,135 @@
+---
+title: "Activity 1 Filled"
+author: "Brooke Wolford"
+date: "2025-12-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Activity 1
+
+Objective: Use information from Module 1 to read in sensitive data and filter to relevant variables
+
+### Pair programming
+
+Pair programming is a technique where two programmers work together at one workstation. One programmer, the driver, writes the code, while the other, the navigator, reviews the code as it's being written and offers suggestions. The goal is to learn from each other. It's best practice to use the same computer but switch driver and navigator roles roughly every 10 minutes or whenever you come to a natural break point.
+
+### Set up environment
+
+
+```{r}
+
+#install.packages("haven")
+library(haven)
+library(tidyr)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(skimr)
+
+sessionInfo()
+
+```
+
+### Reading in the data
+
+We are reading in data from the National Health and Nutrition Examination Survey from August 2021-August 2023. The complete set of data is available [here](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire&Cycle=2021-2023).
+
+These are in a .xpt format which is a SAS Transport file format for data sharing and can be read into R with the `haven` package.
+
+The documentation for the files can be found here:
+[diabetes](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DIQ_L.htm)
+[physical activity](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/PAQ_L.htm)
+[weight](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/WHQ_L.htm)
+
+The join functions are important within dplyr. You can read more [here](https://dplyr.tidyverse.org/reference/mutate-joins.html).
+
+This data could be used to ask a lot of questions. Take time to look into the documentation about the variables. What kind of hypotheses do you have based on what you have seen so far? Think about what you might like to research using AI methods. We will continue with this dataset in the next two activities.
+
+First, we need to set the working directory to the github repository. In the Files tab in the lower right panel, navigate to the "from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r" directory. Select the arrow beside of "More" and "Copy Folder Path to Clipboard." Paste that below within quotes as an argument for the `setwd()` function as illustrated below.
+
+```{r}
+
+#set working directory
+#setwd("OBiWoW-2025/12-Friday/from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r/")
+
+#diabetes
+dia<-read_xpt("data/DIQ_L.xpt")
+
+#physical activity
+pa<-read_xpt("data/PAQ_L.xpt")
+
+#weight
+wei<-read_xpt("data/WHQ_L.xpt")
+
+#diabetes data has more samples than physical activity and weight, so let's do a left join with physicial activity as the anchoring file
+df<-left_join(pa,dia) %>% left_join(wei)
+nrow(df)
+
+```
+
+We now have a dataset with 8153 participants and 20 columns.
+
+### Sensitive Data
+
+Researchers must adhere to national and international regulations, such as the General Data Protection Regulation (GDPR) in the European Union or the Health Insurance Portability and Accountability Act (HIPAA) in the United States. These frameworks define how sensitive data can be collected, stored, shared, and used. For example, under GDPR, data must be processed lawfully, transparently, and only for specified purposes. Researchers are also required to implement data minimization and to ensure that data are accurate, kept up to date, and stored securely.
+
+In practice, ethical research with sensitive data involves several layers of protection. First, researchers typically seek approval from an ethics committee or institutional review board (IRB), which assesses the risks and benefits of the study and ensures that informed consent is obtained. Consent forms should clearly explain how the data will be used, who will have access, and what measures are in place to protect confidentiality. In some cases, broad consent may be used for biobanks or longitudinal studies, but this must still respect participants’ autonomy and rights.
+
+To further protect individuals, sensitive data are often de-identified or pseudonymized, meaning that direct identifiers are removed or replaced with codes. However, even de-identified data can carry risks of re-identification, particularly when linked with other datasets. As a result, researchers must employ technical safeguards (such as encryption and secure servers) as well as administrative controls (like restricted access and data-use agreements) to mitigate these risks.
+
+Ultimately, the responsible use of sensitive data is essential for building public trust and ensuring the long-term sustainability of biomedical research.
+
+### Tidying the data
+
+```{r}
+
+#use glimpse() to try to understand the data 
+glimpse(df)
+
+#let's make a variable for current BMI using the mutate function
+#BMI=weight in lbs * 703/height in inches squared
+df<-df %>% mutate(BMI=WHD020*703/WHD010^2)
+
+#use skim to look at the variables
+df %>% skim()
+
+#let's use mutate to rename the variables to more comprehensible names
+df<-df %>% mutate(Diabetes=DIQ010) %>% mutate(DiabetesAge=DID040) %>% mutate(Prediabetes=DIQ160) %>% mutate(mod_activity=PAD800) %>% mutate(vig_activity=PAD820) %>% mutate(seden_activity=PAD680)
+
+#check the names of the dataframe
+names(df)
+
+#let's subset to just these renamed variables and BMI
+sub<-df%>% select(Diabetes,DiabetesAge,Prediabetes,mod_activity,vig_activity,seden_activity,BMI)
+
+#let's use skim to look at the new data frame
+sub%>%skim()
+
+#how many people have been diagnosed with diabetes?
+sub %>% filter(Diabetes==1) %>% count(Diabetes)
+
+#what was the average age at diagnosis?
+sub %>% summarize(mean=mean(DiabetesAge,na.rm=TRUE))
+
+#how many people have pre-diabetes
+sub %>% filter(Prediabetes==1) %>% count(Prediabetes)
+
+#let's drop samples with a missing BMI
+sub2<-sub%>% drop_na(BMI)
+
+#how many samples do we have now?
+dim(sub2)
+
+#let's write out the sub2 data frame in a comma separated value file we can use later
+out_path<-paste0(getwd(),"/data/NHANES.csv")
+write_csv(sub2,out_path)
+#this file wrote into our working directory, within the data directory, and is named NHANES.csv
+
+```
+
+
+

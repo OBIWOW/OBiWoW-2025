@@ -78,7 +78,7 @@ We recommend installing Julia using `juliaup` (the official installer).
    ```
    This will open the environment in your web browser.
 
-### 5. Pre-compilation (The "Pinky Promise")
+### 5. Pre-compilation
 When you open the notebooks for the first time, Julia will download and compile the necessary packages (CairoMakie, DataFrames, etc.). **This can take 5-10 minutes.**
 
 **Please open `01_julia_advertisement.jl` and `02_image_viewer.jl` at least once before the workshop starts to let them pre-compile!**

@@ -1,0 +1,363 @@
+---
+title: "Activity 3 Filled"
+author: "Brooke Wolford"
+date: "2025-12-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### License
+This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY 4.0). To view a copy of this license, visit: https://creativecommons.org/licenses/by/4.0/
+
+### Sources
+ChatGPT was used in the creation of examples and explanations.
+
+# Activity 3
+
+Objective: Use information from all modules to read in data and create statistical models
+
+Please use pair programming approach as before. 
+
+### Set up environment
+
+```{r}
+
+#install.packages("vip")
+library(haven)
+library(tidyr)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(skimr)
+library(tidymodels)
+library(patchwork)  #merging ggplot2 plots
+library(vip)        # variable importance
+library(ranger)     # random forest engine
+
+sessionInfo()
+
+```
+
+### Reading in the data
+
+We are going to read in the data as we did in Activity 1. 
+
+Remember the documentation for the files can be found here:
+[diabetes](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DIQ_L.htm)
+[physical activity](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/PAQ_L.htm)
+[weight](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/WHQ_L.htm)
+
+First, we need to set the working directory to the github repository. In the Files tab in the lower right panel, navigate to the "from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r" directory. Select the arrow beside of "More" and "Copy Folder Path to Clipboard." Paste that below within quotes as an argument for the `setwd()` function as illustrated below.
+
+```{r}
+
+#set working directory
+#setwd("OBiWoW-2025/12-Friday/from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r/")
+
+#diabetes
+dia<-read_xpt("data/DIQ_L.xpt")
+
+#physical activity
+pa<-read_xpt("data/PAQ_L.xpt")
+
+#weight
+wei<-read_xpt("data/WHQ_L.xpt")
+
+#diabetes data has more samples than physical activity and weight, so let's do a left join with physicial activity as the anchoring file
+df<-left_join(pa,dia) %>% left_join(wei)
+
+#let's use mutate to rename the variables to more comprehensible names
+nhanes<-df %>% mutate(diabetes=as.factor(DIQ010)) %>% mutate(diabetesAge=DID040) %>% mutate(prediabetes=as.factor(DIQ160)) %>% mutate(mod_activity=PAD800) %>% mutate(vig_activity=PAD820) %>% mutate(seden_activity=PAD680) %>% mutate(weight=WHD020)
+
+```
+
+### Objective
+
+Your goal is the following:
+* Choose a question you're interested in
+* Build a predictive model (e.g., classification or regression); 
+* Evaluate model performance
+* Create visualization
+* Interpret the model and findings
+
+### Exploratory Data Analysis and Data Cleaning
+
+Looking at distributions of variables that you'd like to use in the models. One suggestion is to use weight and activity levels to predict diabetes status.
+
+```{r}
+
+glimpse(nhanes)
+skim(nhanes)
+
+# visualize distributions
+p1 <- ggplot(nhanes, aes(x = weight)) + geom_histogram(bins = 30) + ggtitle("Weight")
+p2 <- ggplot(nhanes, aes(x = vig_activity)) + geom_histogram(bins = 30) + ggtitle("Vigorous physical activity")
+p3 <- ggplot(nhanes,aes(x=mod_activity)) + geom_histogram(bins = 30) + ggtitle("Moderate physical activity")
+p4 <- ggplot(nhanes, aes(x = diabetes, y = weight)) + geom_boxplot() + ggtitle("Weight by diabetes")
+p5 <- ggplot(nhanes, aes(x = diabetes, y = vig_activity)) + geom_boxplot() + ggtitle("Vigorous physical activity by diabetes")
+p6 <- ggplot(nhanes, aes(x = diabetes, y = mod_activity)) + geom_boxplot() + ggtitle("Moderate physical activity by diabetes")
+(p1 + p2 + p3) / (p3 + p4 + p6)
+
+```
+
+Let's remove outliers for the variables we are interested in. From the visualization, you may have seen some obvious ones.
+
+```{r}
+
+#remove outliers outside of 1.5 IQR
+nhanes<-nhanes %>% mutate(
+  q1=quantile(weight,0.25,na.rm=TRUE),
+  q3=quantile(weight,0.75,na.rm=TRUE),
+  iqr=q3-q1
+) %>% filter(weight>q1-1.5*iqr & weight<q3+1.5*iqr) %>% mutate(
+  q1=quantile(vig_activity,0.25,na.rm=TRUE),
+  q3=quantile(vig_activity,0.75,na.rm=TRUE),
+  iqr=q3-q1
+) %>% filter(vig_activity>q1-1.5*iqr & vig_activity<q3+1.5*iqr)  %>% mutate(
+   q1=quantile(mod_activity,0.25,na.rm=TRUE),
+  q3=quantile(mod_activity,0.75,na.rm=TRUE),
+  iqr=q3-q1 
+) %>% filter(mod_activity>q1-1.5*iqr & mod_activity<q3+1.5*iqr) %>%   select(-c(q1,q3,iqr))
+  
+  skim(nhanes)
+
+  #visualization again
+p1 <- ggplot(nhanes, aes(x = weight)) + geom_histogram(bins = 30) + ggtitle("Weight")
+p2 <- ggplot(nhanes, aes(x = vig_activity)) + geom_histogram(bins = 30) + ggtitle("Vigorous physical activity")
+p3 <- ggplot(nhanes,aes(x=mod_activity)) + geom_histogram(bins = 30) + ggtitle("Moderate physical activity")
+p4 <- ggplot(nhanes, aes(x = diabetes, y = weight)) + geom_boxplot() + ggtitle("Weight by diabetes")
+p5 <- ggplot(nhanes, aes(x = diabetes, y = vig_activity)) + geom_boxplot() + ggtitle("Vigorous physical activity by diabetes")
+p6 <- ggplot(nhanes, aes(x = diabetes, y = mod_activity)) + geom_boxplot() + ggtitle("Moderate physical activity by diabetes")
+(p1 + p2 + p3) / (p3 + p4 + p6)
+
+#to make future analysis easier, let's exclude the prediabetic and unknown individuals
+#we want to also drop the now empty 3 and 9 factors, or we will run into problems later
+nrow(nhanes)
+nhanes<-nhanes %>% filter(diabetes==1|diabetes==2) %>% mutate(diabetes=droplevels(diabetes))
+nrow(nhanes)
+
+```
+
+### Create training and testing data
+
+```{r}
+# ---------- Train/test split ----------
+set.seed(2025)
+data_split <- initial_split(nhanes, prop = 0.8, strata = diabetes)
+train_data <- training(data_split)
+test_data  <- testing(data_split)
+
+# ---------- Cross-validation folds ----------
+
+cv_folds <- vfold_cv(train_data, v = 5, strata = diabetes)
+
+```
+
+### Create recipe and workflow
+
+```{r}
+# ---------- 4. Recipe: impute missing data + normalize variables  ----------
+# If phys_act is a factor in your data, change steps accordingly.
+rec <- recipe(diabetes ~ weight + vig_activity + mod_activity, data = train_data) %>%
+  step_impute_median(all_numeric_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+# ---------- 5a. Recipe and Workflow: logistic regression ----------
+log_spec <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+
+log_wf <- workflow() %>%
+  add_model(log_spec) %>%
+  add_recipe(rec)
+
+# ---------- 5b. Recipe and Workflow: random forest (tunable) ----------
+rf_spec <- rand_forest(
+  trees = 1000,
+  mtry = tune(),
+  min_n = tune()
+) %>%
+  set_engine("ranger", importance = "impurity") %>%
+  set_mode("classification")
+
+rf_wf <- workflow() %>%
+  add_model(rf_spec) %>%
+  add_recipe(rec)
+
+# ---------- 6. Metrics ----------
+metrics <- metric_set(roc_auc, sens, spec, accuracy, kap)  # ROC AUC primary
+
+
+```
+
+### Fit the statistical models in the training data
+
+We don't have time to learn the theory behind logistic regression and random forest today, but you can read more about [logistic regression](https://www.geeksforgeeks.org/machine-learning/understanding-logistic-regression/) and [random forest](https://www.geeksforgeeks.org/machine-learning/random-forest-algorithm-in-machine-learning/).
+
+You can also check out another random forest tutorial [here](https://juliasilge.com/blog/sf-trees-random-tuning/)
+
+```{r}
+# ---------- 7. Fit logistic regression on CV folds  ----------
+
+#fit_resamples computes performance metrics across resamples
+log_res <- fit_resamples(
+  log_wf,
+  resamples = cv_folds,
+  metrics = metrics,
+  control = control_resamples(save_pred = TRUE)
+)
+
+#use the collect samples to function to look at the metrics nicely
+collect_metrics(log_res)
+
+#let's try to understand how these metrics are coded in the log_res variable
+glimpse(log_res)
+
+# ---------- 8. Tune random forest ----------
+
+#mtry is the number of variables to randomly sample at each split; rule of thumb is square root of number of predictors
+#because we only have 3 predictors, we can only try 1-3
+
+#min_n is the number of data points required in the node for the tree to split further
+#in theory this can be as large as the number of training samples
+
+rf_grid <- grid_random(
+  mtry(range = c(1L, 3L)),
+  min_n(range = c(2L, 20L)),
+  size = 10
+)
+
+rf_tune_res <- tune_grid(
+  rf_wf,
+  resamples = cv_folds,
+  grid = rf_grid,
+  metrics = metrics,
+  control = control_grid(save_pred = TRUE)
+)
+
+#let's visualize the random forest tuning
+rf_tune_res %>%
+  collect_metrics() %>%
+  filter(.metric == "roc_auc") %>%
+  select(mean, min_n, mtry) %>%
+  pivot_longer(min_n:mtry,
+    values_to = "value",
+    names_to = "parameter"
+  ) %>%
+  ggplot(aes(value, mean, color = parameter)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~parameter, scales = "free_x") +
+  labs(x = NULL, y = "AUC")
+
+#we use the show_best function for optimizing the tuning
+show_best(rf_tune_res)
+
+# pick best by roc_auc
+best_rf <- select_best(rf_tune_res, metric="roc_auc")
+
+# finalize the randomforest workflow
+final_rf_wf <- finalize_workflow(rf_wf, best_rf)
+```
+
+
+### Use optimized models on the test set
+
+```{r}
+# ---------- 9. Last fit on the held-out test set ----------
+
+#random forest last fit
+rf_last_fit <- last_fit(final_rf_wf, data_split, metrics = metrics)
+
+# logistic last fit 
+log_last_fit <- last_fit(log_wf, data_split, metrics = metrics)
+
+rf_res_test <- collect_metrics(rf_last_fit)
+log_res_test <- collect_metrics(log_last_fit)
+
+rf_res_test
+log_res_test
+
+# ---------- 10. Collect test-set predictions and make ROC curve ----------
+rf_preds <- collect_predictions(rf_last_fit)
+log_preds <- collect_predictions(log_last_fit)
+
+# ROC curves
+# note the .pred_1, this would be .pred_yes if we had yes/no as outcome
+roc_rf <- roc_curve(rf_preds, truth = diabetes, .pred_1)
+roc_log <- roc_curve(log_preds, truth = diabetes, .pred_1)
+
+p_roc <- ggplot() +
+  geom_line(data = roc_rf, aes(x = 1 - specificity, y = sensitivity), linewidth = 1) +
+  geom_line(data = roc_log, aes(x = 1 - specificity, y = sensitivity), linetype = "dashed", linewidth = 1) +
+  labs(x = "False Positive Rate (1 - specificity)", y = "True Positive Rate (sensitivity)",
+       title = "ROC curves: RF (solid) vs Logistic (dashed)") +
+  coord_equal()
+p_roc
+
+```
+
+### Bonus: Calibration and Variable Importance
+
+```{r}
+# ---------- 11. Calibration (binned) ----------
+
+calib_rf <- rf_preds %>%
+  mutate(prob_bin = ntile(.pred_1, 10)) %>%
+  group_by(prob_bin) %>%
+  summarise(
+    mean_pred = mean(.pred_1),
+    obs = mean(as.numeric(diabetes == 1)),
+    n = n()
+  )
+
+p_calib <- ggplot(calib_rf, aes(x = mean_pred, y = obs)) +
+  geom_point(aes(size = n)) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
+  labs(x = "Mean predicted probability", y = "Observed fraction with diabetes", title = "Calibration (RF)")
+p_calib
+
+# ---------- 12. Variable importance (for final RF) ----------
+
+# extract final fitted parsnip model
+rf_fit <- rf_last_fit$.workflow[[1]] %>% extract_fit_parsnip()
+# vip works with parsnip model objects for ranger
+vip::vip(rf_fit$fit) + ggtitle("Variable importance (RF)")
+
+# ---------- 13. Summarize results (print) ----------
+cat("Random forest test metrics:\n")
+print(rf_res_test)
+cat("Logistic regression test metrics:\n")
+print(log_res_test)
+
+
+```
+
+
+
+### Interpretation
+
+* Primary metric — ROC AUC
+
+Tells discrimination (ability to rank positive vs negative). Values near 1 = excellent, 0.5 = random. Prefer the model with higher test-set ROC AUC provided calibration is OK.
+
+* Sensitivity / Specificity tradeoff
+
+If you want to detect as many diabetics as possible (screening), prioritize sensitivity; if you want to limit false positives, prioritize specificity. Use different classification thresholds (not just 0.5). The ROC curve helps choose a threshold based on the desired tradeoff.
+
+* Calibration plot
+
+Checks whether predicted probabilities match observed frequencies. If the model systematically over/under-predicts probability, calibration needs correction (e.g., Platt scaling or isotonic regression), or you should prefer probabilities only for ranking.
+
+* Variable importance
+
+Shows which predictors the random forest used most. With only weight and phys_act, you'll see which drives predictive power. But note: variable importance in RF is not the same as causal effect.
+
+* Logistic regression coefficients
+
+If logistic is competitive, inspect coefficients (odds ratios). E.g., exp(coef) gives multiplicative change in odds of diabetes per unit increase in predictor (after scaling if recipe normalized). If you normalized predictors, be explicit in reporting the unit (e.g., per SD increase).
+
+* Confusion matrix
+
+Gives real counts of TP/FP/TN/FN at chosen threshold. Useful for calculating PPV/NPV and communicating concrete expected numbers for screening programs.
