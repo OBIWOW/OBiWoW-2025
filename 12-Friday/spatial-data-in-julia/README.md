@@ -52,6 +52,9 @@ To ensure we can start on time, please have the software installed and data down
 Download the Hyperion data from Figshare:
 👉 **[Download Link](https://figshare.com/s/e76c4ea940c55cd65093)**
 
+This data comes from this Myklebust lab [paper](https://ashpublications.org/bloodadvances/article/7/23/7216/497828)
+special thanks to Ivana and Kanutte for providing it.
+
 1. Unzip the downloaded file.
 2. Ensure the `img`, `masks`, and `panel.csv` are placed inside a folder named `data` inside your workshop directory (see structure above).
 
