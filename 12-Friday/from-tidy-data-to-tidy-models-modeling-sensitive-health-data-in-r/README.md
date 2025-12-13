@@ -41,5 +41,4 @@ Please read and complete [Onboarding instructions](onboarding.md) before the tro
 ## Software Requirements
 R 3.6.0+  
 RStudio 2025.09  
-Packages: dplyr, tidyr, readr, ggplot2, knitr, rmarkdown, workflows, tune, mlbench, ranger, randomForest  
-
+Packages: haven, skimr, vip, patchwork, stringr, tidymodels, dplyr, tidyr, readr, ggplot2, knitr, readr, rmarkdown, workflows, tune, mlbench, ranger, randomForest, xgboost, janitor  
