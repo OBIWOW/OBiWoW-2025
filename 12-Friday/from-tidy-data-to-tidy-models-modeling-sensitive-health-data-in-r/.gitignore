@@ -47,3 +47,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+#the data from the workshop, this is created locally for each person by Setup.R and CreateData.R
+workshop_data.RData
