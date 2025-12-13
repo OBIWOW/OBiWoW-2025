@@ -5,9 +5,6 @@ date: "2025-12-08"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 ### License
 This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY 4.0). To view a copy of this license, visit: https://creativecommons.org/licenses/by/4.0/
 
@@ -17,6 +14,7 @@ Content for this Module is derived from
 * https://education.rstudio.com/blog/2020/02/conf20-intro-ml/
 * https://www.r-bloggers.com/2020/05/using-xgboost-with-tidymodels/#google_vignette
 * https://rpubs.com/leoohyama/tidymodelstitanic
+* https://www.tidymodels.org/start/
 
 ChatGPT was used in the creation of examples and explanations.
 
@@ -27,7 +25,15 @@ By the end of the session, participants will be able to:
 	* Train and evaluate basic models using caret, tidymodels, randomForest, and xgboost.
 	* Interpret key model evaluation metrics.
 
-### Introduction
+### Setup	
+
+We aren't reading any data in or writing out, so we will skip setting the global root directory this time.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Background
 
 AI versus Machine Learning
 
@@ -65,10 +71,16 @@ library(skimr)
 library(workflows)
 library(tune)
 library(mlbench)
+library(vip)
+
+#if you get an error with vip, try to re-install
+#note you need quotations when using install.packages() but not when using library()
+#install.packages("vip")
 
 ```
 
 ### Exploratory Data Analysis and Pre-processing
+
 The first step is an exploratory data analysis—-plots and summaries of the data to understand the variables and their distributions. However, we have done that in previous modules. 
 
 We will use the Pima Indian Women’s diabetes dataset which contains information on 768 Pima Indian women’s diabetes status, as well as many predictive features. This is built into the `mlbench` library.
@@ -76,7 +88,11 @@ We will use the Pima Indian Women’s diabetes dataset which contains informatio
 ```{r}
 #load data from the mlbench package
 data("PimaIndiansDiabetes")
+
+#reassigning to df for easier typing
 df <- PimaIndiansDiabetes
+
+#if you had any issues with mlbench, you can load the dataspace as before and use dataset called pima
 
 #let's look at the data
 glimpse(df)
@@ -107,14 +123,14 @@ Training data is used for the model training and hyperparameter tuning. Once tra
 
 This split can be done automatically using the inital_split() function (from rsample) which creates a special “split” object.
 
-It is important to set a random seed beore using a function that uses randomness (e.g. shuffling data, sampling, or simulations). This allows you to get the exact same sequence of random numbers each time and makes your code testable.
+It is important to set a random seed beore using a function that uses randomness (e.g. shuffling data, sampling, or simulations). This allows you to get the exact same sequence of random numbers each time and makes your code testable. You can read about setting the seed [here](https://r-coder.com/set-seed-r/).
 
 ```{r}
 
 set.seed(1234) #set a seed so we have a reproducible split
 
 # split the data into training (75%) and testing (25%)
-df_split <- initial_split(df_clean, prop = 3/4)
+df_split <- initial_split(df_clean, prop = 0.75)
 df_split
 
 # extract training and testing sets
