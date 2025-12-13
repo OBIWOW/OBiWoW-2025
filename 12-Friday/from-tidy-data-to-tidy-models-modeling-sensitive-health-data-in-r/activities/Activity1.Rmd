@@ -1,5 +1,5 @@
 ---
-title: "Activity 1"
+title: "Activity 1 "
 author: "Brooke Wolford"
 date: "2025-12-08"
 output: html_document
@@ -49,29 +49,65 @@ The join functions are important within dplyr. You can read more [here](https://
 
 This data could be used to ask a lot of questions. Take time to look into the documentation about the variables. What kind of hypotheses do you have based on what you have seen so far? Think about what you might like to research using AI methods. We will continue with this dataset in the next two activities.
 
-First, we need to set the working directory to the github repository. In the Files tab in the lower right panel, navigate to the "from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r" directory. Select the arrow beside of "More" and "Copy Folder Path to Clipboard." Paste that below within quotes as an argument for the `setwd()` function as illustrated below.
+We will load in the data as in Module 1. You probably still have the correct working directory and can proceed directly to `load()` the `.Rdata` file. 
+
+If that doesn't work, in the Files tab on the bottom right panel, navigate to the folder `from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r`. Click on the arrow beside the blue wheel and select "Set As Working Directory" from the contextual menu. This will execute a `setwd()` command in the Console to set the directory to the correct space to find the .RData file.
 
 ```{r}
+
+###########################################################################################
+###### FOR YOUR REFERENCE ONLY: HOW TO READ IN DATA FROM DATA/ DIRECTORY ##################
+###########################################################################################
 
 #set working directory
 #setwd("OBiWoW-2025/12-Friday/from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r/")
 
 #diabetes
-dia<-read_xpt("data/DIQ_L.xpt")
+#dia<-read_xpt("data/DIQ_L.xpt")
 
 #physical activity
-pa<-read_xpt("data/PAQ_L.xpt")
+#pa<-read_xpt("data/PAQ_L.xpt")
 
 #weight
-wei<-read_xpt("data/WHQ_L.xpt")
+#wei<-read_xpt("data/WHQ_L.xpt")
 
-#diabetes data has more samples than physical activity and weight, so let's do a left join with physicial activity as the anchoring file
-df<-left_join(pa,dia) %>% left_join(wei)
+###########################################################################################
+##############################  READ IN .RDATA ########################################### 
+###########################################################################################
 
+#Use the blue wheel in the Files pane to "Set Working Directory as the root directory 
+#this will execute a command in the Console to set the directory
+#copy and paste the setwd command below to set the working directory within the .Rmd chunk if you want to execute code within the .Rmd
+#setwd("/your/path/OBiWoW-2025/12-Friday/from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r")
+
+#if you are in the root directory, you can just load the data space created by Setup.R/CreateData.R
+load("workshop_data.RData")
+
+#take a peak at the three data frames of interest
+glimpse(wei)
+glimpse(pa)
+glimpse(dia)
 
 ```
 
-We now have a dataset with 8153 participants and 20 columns.
+```{r}
+
+#diabetes data has more samples than physical activity and weight, so let's do a left join with physicial activity as the anchoring file
+df<-left_join(pa,dia) %>% left_join(wei)
+nrow(df)
+
+#let's see how the join function works by looking at the function documentation
+?left_join
+
+#you can open a dataset to view it using the View function
+View(df)
+
+#notice the descriptive labels under each header
+#this is metadata that came from an SAS Transport file (.xpt) and can be revised by changing the labels attribute
+
+```
+
+We now have a dataset with 8153 participants and 20 columns in the variable `dat`.
 
 ### Sensitive Data
 
