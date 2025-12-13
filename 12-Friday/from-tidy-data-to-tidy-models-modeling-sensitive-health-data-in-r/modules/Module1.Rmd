@@ -72,6 +72,8 @@ In general, R will print to the console any object returned by a function or ope
 
 #we use an arrow to assign a value to a variable
 x<-5
+
+#what class is the variable
 class(x)
 
 ```
@@ -105,40 +107,52 @@ sessionInfo()
 
 ```
 
-## Part 2: readr to read in data
+## Part 2: Using readr to read in data
 
-We are going to use example data from Software Carpentry. I have already downloaded it and included it in the data directory within the repository. In the Files tab on the bottom right panel, navigate to the folder `from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r`. Click on  "More" and select "Copy Folder Path to Clipboard." Paste that path below where it says "PASTE HERE". Be sure to keep the quotations and remove the hashtag.
-
-```{r}
-
-#path<-"PASTE HERE"
-file<-"/data/sample.csv"
-path<-paste0(path,file)
-
-```
-
-Now, let's read our data into R. There are several options for reading csv files:
+There are several options for reading csv files:
 
 - Base R has the function `read.csv()` which creates a basic data frame.
 - I like to use the `data.table` package which has a function `fread()` and can be memory efficient for reading larger datasets. This creates a data.table object which has its own grammar for manipulating.
 - The tidyverse has the `readr` package with the function `read_csv()`. This creates a tibble, a special type of data frame. 
 
+We are going to use example data from Software Carpentry. I have already downloaded it and included it in the `data/` directory within the repository. When you ran Setup.R, an R data space (`workshop_data.RData`) was created where I have already read the data frame into a data frame object called `dat`.
+
+In the Files tab on the bottom right panel, navigate to the folder `from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r`. Click on the arrow beside the blue wheel and select "Set As Working Directory" from the contextual menu. This will execute a `setwd()` command in the Console to set the directory to the correct space to find the .RData file.
 
 ```{r}
 
-#let's inspect the function details
-?read_csv
+###########################################################################################
+###### FOR YOUR REFERENCE ONLY: HOW TO READ IN DATA FROM DATA/ DIRECTORY ##################
+###########################################################################################
 
-#we pass 2 arguments, the path where the file is, and information about if the file has column names
-#we assign the data frame information to the variable "dat"
-dat<-read_csv(file=path,col_names=TRUE)
+#define the path to the data, be sure to keep the quotations and remove the hashtag.
+#root_path<-"PASTE HERE"
+#full_path<-paste0(root_path,"/data/sample.csv")
 
-	#for local access from Windows computers (given that the working directory is set to "../BioData-Training-School-2025/Day1_IntroR") 
-		#NB: Cannot use file paths with the read_csv command on Windows, so working directory needs to be set beforehand
-	#dat<-read_csv(file, col_names=TRUE)
+#read in the sample data as a tibble using the full_path variable.
+#Note that the file does have column names.
+#dat<-read_csv(full_path,col_names=TRUE)
 
-#let's look at the first few rows 
+###########################################################################################
+##############################  READ IN .RDATA ########################################### 
+###########################################################################################
+
+#Use the blue wheel in the Files pane to "Set Working Directory as the root directory 
+#this will execute a command in the Console to set the directory
+#copy and paste the setwd command below to set the working directory within the .Rmd chunk if you want to execute code within the .Rmd
+#setwd("/your/path/OBiWoW-2025/12-Friday/from-tidy-data-to-tidy-models-modeling-sensitive-health-data-in-r")
+
+#if you are in the root directory, you can just load the data space created by Setup.R/CreateData.R
+load("workshop_data.RData")
+
+#let's look at the first few rows of the data frame called 'dat'
 dat %>% glimpse()
+
+#we can accomplish the same thing with slightly different syntax
+glimpse(dat)
+
+#let's inspect the function
+?glimpse
 
 #what class is the object dat?
 class(dat)
